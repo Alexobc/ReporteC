@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión de Contenedores</title>
+    <link rel="stylesheet" href="Reporte.css">
+
+    <!-- Bibliotecas externas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- Usamos jsPDF 2.5.1 que tiene mejor soporte para setFont -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Reporte de Contenedores</h1>
+        </header>
+
+        <div class="control-panel">
+            <div class="file-section">
+                <h2>Cargar Archivo</h2>
+                <div class="file-input-container">
+                    <input type="file" id="csv-file" accept=".csv" />
+                    <button id="load-csv" class="btn primary">Cargar CSV</button>
+                </div>
+                <div id="file-info" class="hidden">
+                    <span id="file-name"></span>
+                    <div class="file-status">
+                        <span id="file-status"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <h2>Filtrar Contenedores</h2>
+                <div class="filter-options">
+                    <div class="filter-method">
+                        <div class="filter-option">
+                            <input type="radio" id="filter-multiple" name="filter-type" value="multiple" checked />
+                            <label for="filter-multiple">Varios contenedores</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="radio" id="filter-single" name="filter-type" value="single" />
+                            <label for="filter-single">Contenedor individual</label>
+                        </div>
+                    </div>
+                    
+                    <div id="multiple-filter" class="filter-inputs">
+                        <textarea id="container-list" placeholder="Ingresa los contenedores separados por comas, espacios o saltos de línea"></textarea>
+                        <div id="filter-status" class="filter-status hidden"></div>
+                    </div>
+                    
+                    <!-- <div id="single-filter" class="filter-inputs hidden">
+                        <input type="text" id="container-single" placeholder="Ingresa el ID del contenedor" />
+                        <div id="container-suggestions" class="suggestions hidden"></div>
+                    </div> -->
+                    
+                    <div class="filter-actions">
+                        <button id="apply-filter" class="btn secondary">Filtrar contenedores</button>
+                        <button id="clear-filter" class="btn outline">Limpiar filtros</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="data-section hidden" id="data-section">
+            <div class="table-controls">
+                <h2>Datos de Contenedores</h2>
+                <div class="actions">
+                    <button id="remove-selected" class="btn danger" disabled>Eliminar seleccionados</button>
+                    <div class="export-options">
+                        <button id="export-excel" class="btn success">Exportar a Excel</button>
+                        <button id="export-pdf" class="btn success">Exportar a PDF</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table id="data-table">
+                    <thead>
+                        <tr>
+                            <th class="checkbox-col"><input type="checkbox" id="select-all" /></th>
+                            <th data-field="Division">División</th>
+                            <th data-field="Contenedor">Contenedor</th>
+                            <th data-field="OC">OC</th>
+                            <th data-field="Proveedor">Proveedor</th>
+                            <th data-field="Mercancia">Mercancía</th>
+                            <th data-field="Id_art">Id art</th>
+                            <th data-field="Piezas">Piezas</th>
+                            <th data-field="Pre_distribucion" class="editable">Pre distribución</th>
+                            <th data-field="Cartones_mix" class="editable">Cartones mix</th>
+                            <th data-field="Cantidad_prepack" class="editable">Cantidad por prepack</th>
+                            <th data-field="Numero_cajas" class="editable">Número de cajas</th>
+                            <th data-field="Observaciones" class="editable">Observaciones e incidencias</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Los datos se cargarán dinámicamente -->
+                    </tbody>
+                    <tfoot id="table-footer">
+                        <!-- Fila de totales -->
+                    </tfoot>
+                </table>
+            </div>
+            
+            <div class="pagination" id="pagination">
+                <button id="prev-page" class="btn outline">Anterior</button>
+                <span id="page-info">Página 1 de 1</span>
+                <button id="next-page" class="btn outline">Siguiente</button>
+            </div>
+        </div>
+
+        <div id="no-data" class="message-box">
+            <div class="message">
+                <h2>Sin datos para mostrar</h2>
+                <p>Carga un archivo CSV y aplica filtros para ver los contenedores.</p>
+            </div>
+        </div>
+
+        <div id="notification" class="notification hidden">
+            <span id="notification-message"></span>
+            <button id="close-notification">&times;</button>
+        </div>
+
+        <footer class="app-footer">
+            <div class="footer-content">
+                <p>Lux in Tenebris A. O. C. &copy; <span id="current-year"></span></p>
+                <p>Versión 1.0.0</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="Reporte.js"></script>
+</body>
+</html>
